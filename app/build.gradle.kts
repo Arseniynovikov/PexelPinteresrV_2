@@ -1,11 +1,13 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     kotlin("plugin.serialization") version "1.9.20"
+
 }
 
 android {
@@ -35,11 +37,20 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    val localProperties = Properties().apply {
+        val file = rootProject.file("local.properties")
+        if (file.exists()) load(file.inputStream())
+    }
+    val apiKey = localProperties.getProperty("PEXELS_API_KEY") ?: ""
+
+    defaultConfig {
+        buildConfigField("String", "PEXELS_API_KEY", "\"$apiKey\"")
     }
 }
 
