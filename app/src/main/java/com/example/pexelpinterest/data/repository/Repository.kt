@@ -1,8 +1,5 @@
 package com.example.pexelpinterest.data.repository
 
-import com.example.pexelpinterest.data.database.PhotoEntity
-import com.example.pexelpinterest.data.retrofit.models.PhotoApi
-import com.example.pexelpinterest.data.retrofit.models.PhotoResponse
 import com.example.pexelpinterest.domain.Photo
 
 import kotlinx.coroutines.flow.Flow

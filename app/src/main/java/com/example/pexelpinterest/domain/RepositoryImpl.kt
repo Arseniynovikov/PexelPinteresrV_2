@@ -1,13 +1,8 @@
 package com.example.pexelpinterest.domain
 
-import com.example.pexelpinterest.data.database.AppDatabase
 import com.example.pexelpinterest.data.database.Dao
-import com.example.pexelpinterest.data.database.PhotoEntity
 import com.example.pexelpinterest.data.repository.Repository
 import com.example.pexelpinterest.data.retrofit.PexelApi
-
-import com.example.pexelpinterest.data.retrofit.models.PhotoApi
-import com.example.pexelpinterest.data.retrofit.models.PhotoResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
