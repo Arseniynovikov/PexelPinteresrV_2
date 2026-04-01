@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "bookmark_photos")
 data class PhotoEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val id: Long,
     val author: String,
     val url: String,
     val srcOriginal: String,
