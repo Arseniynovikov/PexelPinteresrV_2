@@ -55,11 +55,12 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.compose.material:material-icons-extended")
 
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
     implementation(libs.moshi.kotlin)
+    implementation(libs.androidx.compose.material3)
     ksp(libs.moshi.kotlin.codegen)
 
     implementation(libs.hilt.android)
