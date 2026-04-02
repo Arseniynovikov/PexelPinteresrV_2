@@ -39,7 +39,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(client: OkHttpClient, moshi: Moshi): Retrofit =
-        Retrofit.Builder().baseUrl("https://pexels.com").addConverterFactory(
+        Retrofit.Builder().baseUrl("https://api.pexels.com").addConverterFactory(
             MoshiConverterFactory.create(moshi)
         ).build()
 

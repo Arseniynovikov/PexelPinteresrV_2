@@ -1,6 +1,7 @@
 package com.example.pexelpinterest.navigation
 
 import android.net.http.SslCertificate.saveState
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -33,6 +34,7 @@ import com.example.pexelpinterest.R
 import com.example.pexelpinterest.ui.features.bookmarks.BookmarkScreen
 import com.example.pexelpinterest.ui.features.details.DetailsScreen
 import com.example.pexelpinterest.ui.features.list.PhotoListScreen
+import com.squareup.moshi.internal.Util
 import kotlinx.coroutines.selects.select
 import kotlinx.serialization.Serializable
 
@@ -43,29 +45,46 @@ data object ListScreenRoute
 data object BookmarkScreenRoute
 
 @Serializable
-data class DetailsScreenRoute(val photoId: Int)
+data class DetailsScreenRoute(val photoId: Long)
 
 @Composable
 fun AppNavigation() {
+
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    val isDetailsScreen = currentDestination?.hasRoute<DetailsScreenRoute>() == true
+
+
     Scaffold(
         bottomBar = {
+
             BottomBar(navController)
         }
     ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = ListScreenRoute,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(
+                top = if (isDetailsScreen) 0.dp else innerPadding.calculateTopPadding(),
+                bottom = if (isDetailsScreen) 0.dp else innerPadding.calculateBottomPadding()
+            )
         ) {
             composable<ListScreenRoute> {
-                PhotoListScreen()
+                PhotoListScreen(onPhotoClick = { id ->
+                    navController.navigate(DetailsScreenRoute(id))
+                })
             }
             composable<BookmarkScreenRoute> {
                 BookmarkScreen()
             }
             composable<DetailsScreenRoute> {
-                DetailsScreen()
+                DetailsScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }
@@ -76,46 +95,50 @@ fun BottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    NavigationBar {
-        NavigationBarItem(
-            selected = currentDestination?.hasRoute<ListScreenRoute>() == true,
-            onClick = {
-                navController.navigate(ListScreenRoute) {
-                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            },
-            icon = {
-                val isSelected = currentDestination?.hasRoute<ListScreenRoute>() == true
-                Icon(
-                    painter = painterResource(
-                        id =
-                            if (isSelected) R.drawable.ic_home_red else R.drawable.ic_home
-                    ), "List"
-                )
-            }
-        )
+    val showBottomBar = currentDestination?.hasRoute<DetailsScreenRoute>() == false
 
-        NavigationBarItem(
-            selected = currentDestination?.hasRoute<BookmarkScreenRoute>() == true,
-            onClick = {
-                navController.navigate(BookmarkScreenRoute) {
-                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+    if (showBottomBar) {
+        NavigationBar {
+            NavigationBarItem(
+                selected = currentDestination.hasRoute<ListScreenRoute>(),
+                onClick = {
+                    navController.navigate(ListScreenRoute) {
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                icon = {
+                    val isSelected = currentDestination.hasRoute<ListScreenRoute>()
+                    Icon(
+                        painter = painterResource(
+                            id =
+                                if (isSelected) R.drawable.ic_home_red else R.drawable.ic_home
+                        ), "List"
+                    )
                 }
-            },
-            icon = {
-                val isSelected = currentDestination?.hasRoute<BookmarkScreenRoute>() == true
-                Icon(
-                    painter = painterResource(
-                        id =
-                            if (isSelected) R.drawable.ic_bookmark_red else R.drawable.ic_bookmark
-                    ), "Bookmarks"
-                )
-            }
-        )
+            )
+
+            NavigationBarItem(
+                selected = currentDestination.hasRoute<BookmarkScreenRoute>(),
+                onClick = {
+                    navController.navigate(BookmarkScreenRoute) {
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                icon = {
+                    val isSelected = currentDestination.hasRoute<BookmarkScreenRoute>()
+                    Icon(
+                        painter = painterResource(
+                            id =
+                                if (isSelected) R.drawable.ic_bookmark_red else R.drawable.ic_bookmark
+                        ), "Bookmarks"
+                    )
+                }
+            )
+        }
     }
 }
 

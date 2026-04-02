@@ -1,5 +1,6 @@
 package com.example.pexelpinterest.domain
 
+import android.util.Log
 import com.example.pexelpinterest.data.database.Dao
 import com.example.pexelpinterest.data.repository.Repository
 import com.example.pexelpinterest.data.retrofit.PexelApi
@@ -29,7 +30,9 @@ class RepositoryImpl @Inject constructor(
         page: Int,
         perPage: Int
     ): List<Photo> =
-        pexelApi.getCuratedPhotos(page, perPage).photoApis.map { it-> it.toDomain() }
+        pexelApi.getCuratedPhotos(page, perPage).photoApis.map { it ->
+            it.toDomain()
+        }
 
 
     override suspend fun searchPhotos(
