@@ -10,6 +10,12 @@ plugins {
 
 }
 
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()){
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
 android {
     namespace = "com.example.pexelpinterest"
     compileSdk = 36
@@ -43,13 +49,8 @@ android {
         buildConfig = true
     }
 
-    val localProperties = Properties().apply {
-        val file = rootProject.file("local.properties")
-        if (file.exists()) load(file.inputStream())
-    }
-    val apiKey = localProperties.getProperty("PEXELS_API_KEY") ?: ""
-
     defaultConfig {
+        val apiKey = localProperties.getProperty("PEXELS_API_KEY") ?: ""
         buildConfigField("String", "PEXELS_API_KEY", "\"$apiKey\"")
     }
 }
@@ -57,6 +58,9 @@ android {
 dependencies {
     implementation("androidx.compose.material:material-icons-extended")
 
+
+
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
     implementation(libs.moshi.kotlin)

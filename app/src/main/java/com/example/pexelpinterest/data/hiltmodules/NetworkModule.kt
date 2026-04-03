@@ -33,15 +33,24 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providesOkHttpClient(interceptor: Interceptor): OkHttpClient =
-        OkHttpClient.Builder().addInterceptor(interceptor).build()
+    fun providesOkHttpClient(interceptor: Interceptor): OkHttpClient {
+        val logging = okhttp3.logging.HttpLoggingInterceptor().apply {
+            level = okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
+        }
+        return OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .addInterceptor(logging)
+            .build()
+    }
 
     @Provides
     @Singleton
     fun provideRetrofit(client: OkHttpClient, moshi: Moshi): Retrofit =
-        Retrofit.Builder().baseUrl("https://api.pexels.com").addConverterFactory(
-            MoshiConverterFactory.create(moshi)
-        ).build()
+        Retrofit.Builder()
+            .baseUrl("https://api.pexels.com")
+            .client(client)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
 
     @Provides
     @Singleton

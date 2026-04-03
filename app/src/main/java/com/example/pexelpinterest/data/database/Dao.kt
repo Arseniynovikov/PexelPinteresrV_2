@@ -19,5 +19,5 @@ interface Dao {
     fun getAllBookmarkPhotos(): Flow<List<PhotoEntity>>
 
     @Query("select * from bookmark_photos where id = :id")
-    fun getBookmarkPhotoById(id: Int): Flow<PhotoEntity>
+    fun getBookmarkPhotoById(id: Long): Flow<PhotoEntity?>
 }

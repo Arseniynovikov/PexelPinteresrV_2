@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SearchBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,7 +64,7 @@ fun PhotoList(photos: List<Photo>, onClick: (Long) -> Unit) {
 }
 
 @Composable
-@Preview(showSystemUi = true)
+@Preview(showBackground = true)
 fun PhotoListScreenPreview() {
 
     val mockPhotos = List(6) { index ->

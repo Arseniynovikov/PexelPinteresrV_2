@@ -77,7 +77,9 @@ fun AppNavigation() {
                 })
             }
             composable<BookmarkScreenRoute> {
-                BookmarkScreen()
+                BookmarkScreen(onPhotoClick = { id ->
+                    navController.navigate(DetailsScreenRoute(id))
+                })
             }
             composable<DetailsScreenRoute> {
                 DetailsScreen(
