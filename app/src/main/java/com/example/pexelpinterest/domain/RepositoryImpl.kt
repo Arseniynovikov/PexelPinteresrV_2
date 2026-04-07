@@ -14,11 +14,10 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
-
 class RepositoryImpl @Inject constructor(
     val dao: Dao,
     val pexelApi: PexelApi
-): Repository {
+) : Repository {
     override suspend fun insertBookmarkPhoto(photo: Photo) {
         dao.insertBookmarkPhoto(photo.toEntity())
     }
@@ -31,23 +30,23 @@ class RepositoryImpl @Inject constructor(
         dao.getAllBookmarkPhotos().map { it -> it.map { photoEntity -> photoEntity.toDomain() } }
 
 
-
     override suspend fun getCuratedPhotos(
         page: Int,
         perPage: Int
-    ): List<Photo> =
-        pexelApi.getCuratedPhotos(page, perPage).photoApis.map { it ->
+    ): Flow<List<Photo>> = flow {
+        emit(pexelApi.getCuratedPhotos(page, perPage).photoApis.map { it ->
             it.toDomain()
-        }
+        })
+    }
 
 
     override suspend fun searchPhotos(
         query: String,
         page: Int,
         perPage: Int
-    ): List<Photo> =
-        pexelApi.searchPhotos(query, page, perPage).photoApis.map{it -> it.toDomain()}
-
+    ): Flow<List<Photo>> = flow {
+        emit(pexelApi.searchPhotos(query, page, perPage).photoApis.map { it -> it.toDomain() })
+    }
 
 
     private suspend fun getPhotoById(id: Long): Photo =
@@ -59,18 +58,21 @@ class RepositoryImpl @Inject constructor(
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getPhotoResultById(id: Long): Flow<PhotoLoadingResult>{
+    override fun getPhotoResultById(id: Long): Flow<PhotoLoadingResult> {
         return getBookmarkPhotoById(id).flatMapLatest { photo ->
-            if(photo != null){
+            if (photo != null) {
                 Log.e("RepositoryImpGetPhotoResultByIdCath", "photo = ${photo.id}")
                 flowOf(PhotoLoadingResult(photo = photo, isBookmark = true))
-            }else{
+            } else {
                 flow {
                     emit(PhotoLoadingResult(isLoading = true))
 
                     try {
                         val photoFromApi = getPhotoById(id)
-                        Log.e("RepositoryImpGetPhotoResultByIdCath", "photoFromApi = ${photoFromApi.id}")
+                        Log.e(
+                            "RepositoryImpGetPhotoResultByIdCath",
+                            "photoFromApi = ${photoFromApi.id}"
+                        )
                         emit(
                             PhotoLoadingResult(
                                 photo = photoFromApi,

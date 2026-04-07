@@ -13,8 +13,8 @@ interface Repository {
     fun getAllBookmarkPhotos(): Flow<List<Photo>>
 
 
-    suspend fun getCuratedPhotos(page: Int, perPage: Int): List<Photo>
-    suspend fun searchPhotos(query: String, page: Int, perPage: Int): List<Photo>
+    suspend fun getCuratedPhotos(page: Int, perPage: Int): Flow<List<Photo>>
+    suspend fun searchPhotos(query: String, page: Int, perPage: Int): Flow<List<Photo>>
 
 
 
